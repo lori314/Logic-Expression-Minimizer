@@ -1,0 +1,120 @@
+import numpy as np
+def is_same(i,j,line1,line2):
+    flag=0
+    for k in range(0,row):
+        if k==i or k==j:
+            continue
+        else:
+            if not value_list[line1][k]==value_list[line2][k]:
+                flag=1
+    if not flag==0:
+        flag=0
+    else:
+        return True
+    return False
+def translate(make_up_value,i,j):
+    if(np.equal(make_up_value,[1,0,0,0]).all()):
+        print('¬'+chr(97+i)+'∧'+'¬'+chr(97+j),end='')
+    elif(np.equal(make_up_value,[0,1,0,0]).all()):
+        print('¬'+chr(97+i)+'∧'+chr(97+j),end='')
+    elif(np.equal(make_up_value,[0,0,1,0]).all()):
+        print(chr(97+i)+'∧'+'¬'+chr(97+j),end='')
+    elif(np.equal(make_up_value,[0,0,0,1]).all()):
+        print(chr(97+i)+'∧'+chr(97+j),end='')
+    elif(np.equal(make_up_value,[1,1,0,0]).all()):
+        print('¬'+chr(97+i),end='')
+    elif(np.equal(make_up_value,[1,0,1,0]).all()):
+        print('¬'+chr(97+j),end='')
+    elif(np.equal(make_up_value,[1,0,0,1]).all()):
+        print(chr(97+i)+'↔'+chr(97+j),end='')
+    elif(np.equal(make_up_value,[0,1,0,1]).all()):
+        print(chr(97+j),end='')
+    elif(np.equal(make_up_value,[0,1,1,0]).all()):
+        print(chr(97+i)+'⊕'+chr(97+j),end='')
+    elif(np.equal(make_up_value,[0,0,1,1]).all()):
+        print(chr(97+i),end='')
+    elif(np.equal(make_up_value,[0,1,1,1]).all()):
+        print(chr(97+i)+'∨'+chr(97+j),end='')
+    elif(np.equal(make_up_value,[1,0,1,1]).all()):
+        print(chr(97+j)+'→'+chr(97+i),end='')
+    elif(np.equal(make_up_value,[1,1,0,1]).all()):
+        print(chr(97+i)+'→'+chr(97+j),end='')
+    elif(np.equal(make_up_value,[1,1,1,0]).all()):
+        print(chr(97+i)+'→'+'¬'+chr(97+j),end='')
+value_list=[]
+row=3
+line=2**row
+data_str='''0	0	0	0
+0	1	0	0
+1	0	0	1
+1	1	0	1
+0	0	1	0
+0	1	1	1
+1	0	1	0
+1	1	1	1'''
+str_list=data_str.split('\n')
+for i_str in str_list:
+    value=i_str.split('\t')
+    i_value=list(map(int,value))
+    if i_value[row]==1:
+        value_list.append(i_value)
+visited=[0]*line
+same_list=[]
+top=0
+for i in range(0,row):
+    for j in range(i+1,row):
+        for line1 in range(0,len(value_list)-1):
+            if visited[line1]==1:
+                continue
+            same_list.append([i,j,line1])
+            for line2 in range(line1+1,len(value_list)):
+                if visited[line2]==1:
+                    continue
+                if is_same(i,j,line1,line2)==True:
+                    same_list[top].append(line2)
+                    visited[line2]=1
+                    visited[line1]=1
+            top=top+1
+
+print(same_list)
+for same in same_list:
+    values=[]
+    make_up_value=[0,0,0,0]
+    for line in range(2,len(same)):
+        values.append((value_list[same[line]][same[0]],value_list[same[line]][same[1]]))
+    for value in values:
+        n=value[0]*2+value[1]
+        make_up_value[n]=1
+    if len(values)==1:
+        continue
+    print('(',end='')
+    translate(make_up_value,same[0],same[1])
+    print(')',end='')
+    for k in range(0,row):
+        if k==same[0] or k==same[1]:
+            continue
+        print('∧',end='')
+        if value_list[same[line]][k]==0:
+            print('¬'+chr(97+k),end='')
+        else:
+            print(chr(97+k),end='')
+    if not same is same_list[-1]:
+        print('∨',end='')
+
+for line in range(0,len(value_list)):
+    if visited[line]==0:
+        for k in range(0,row):
+            if value_list[line][k]==0:
+                print('¬'+chr(97+k),end='')
+            else:
+                print(chr(97+k),end='')
+            if not k==row-1:
+                print('∧',end='')
+        print('∨',end='')
+
+
+
+    
+    
+
+
